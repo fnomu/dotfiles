@@ -14,8 +14,7 @@ alias o='less'
 alias h='history'
 alias c='clear'
 alias p='pwd'
-alias get_file_path_in_this_dir='find `pwd` -maxdepth 1'
-alias INC='perl -e `foreach(@INC){print "$_\n";}`'
+alias INC=`perl -e 'foreach(@INC){print "$_\n";}'`
 alias less='less -N'
 alias vi ='/usr/local/bin/vim'
 alias lo='ls -a -l | less -N'
@@ -23,7 +22,7 @@ alias pd='percol $HOME/dir.info | xargs open'
 alias po='percol $HOME/file.info | xargs open'
 alias pel='percol $HOME/file.info | xargs less'
 #alias listpm='find `perl -e 'print "@INC"'` -name "*.pm"' 
-alias listpm='perl -e `print "@INC"`'
+alias listpm=`perl -e 'print "@INC"'`
 alias rm='rm -r'
 alias s='sudo'
 alias ..='cd ../'
@@ -65,9 +64,8 @@ alias ls='gls --color=auto'
 # Finished adapting your PATH environment variable for use with MacPorts.
 
 #Add Search Module Path for Python 
-# PYTHONPATH=/usr/local/lib/python2.7/site-packages:$PYTHONPATH
-PYTHONPATH=/usr/local/lib/python2.7/site-packages
-export PYTHONPATH
+PYTHOMPATH=/usr/local/lib/python2.7/site-packages:$PYTHOMPATH
+export PYTHOMPATH
 
 # added by Anaconda 1.8.0 installer
 export PATH=/Users/nf2/anaconda/bin:$PATH
