@@ -1,0 +1,158 @@
+#---------------------------------------------------------------------------
+# General
+#---------------------------------------------------------------------------
+# Lang
+export LANG=ja_JP.UTF-8
+## LaTeX
+# export LANG=ja_JP.eucJP
+# ビープ音を鳴らさないようにする
+setopt no_beep
+# Title
+case "${TERM}" in
+kterm*|xterm*|terminal*)
+ precmd() {
+  echo -ne "\033]0;${USER}@${HOST%%.*}:${PWD}\007"
+ }
+ ;;
+esac
+# Spell check
+setopt correct
+# Vim like key bind
+bindkey -v
+
+#---------------------------------------------------------------------------
+# History
+#---------------------------------------------------------------------------
+HISTFILE=~/.zsh_history
+HISTSIZE=10000
+SAVEHIST=10000
+# 重複したコマンドラインはヒストリに追加しない
+setopt hist_ignore_dups
+# 履歴の共有
+setopt share_history
+# ヒストリにhistoryコマンドを記録しない
+setopt hist_no_store
+# 余分なスペースを削除してヒストリに記録する
+setopt hist_reduce_blanks
+# 履歴ファイルに時刻を記録
+setopt extended_history
+# 履歴をインクリメンタルに追加
+setopt inc_append_history
+# スペースで始まるコマンド行はヒストリリストから削除
+setopt hist_ignore_space
+# ヒストリを呼び出してから実行する間に一旦編集可能
+setopt hist_verify
+autoload history-search-end
+# 履歴検索機能のショートカット
+zle -N history-beginning-search-backward-end history-search-end
+zle -N history-beginning-search-forward-end history-search-end
+bindkey "^P" history-beginning-search-backward-end
+bindkey "^N" history-beginning-search-forward-end
+
+#---------------------------------------------------------------------------
+# Complement
+#---------------------------------------------------------------------------
+# 補完
+autoload -U compinit
+compinit
+# 予測機能
+# autoload predict-on
+# predict-on
+# cdのタイミングで自動的にpushd
+setopt auto_pushd
+# 補完時にスペルチェックをする
+setopt auto_correct
+# 自動修正
+setopt correct
+setopt correct_all
+# 補完時にヒストリを自動的に展開する
+setopt hist_expand
+# 補完候補一覧でファイルの種別を識別マーク表示
+setopt list_types
+# 補完候補が複数ある時に、一覧表示
+setopt auto_list
+# 補完キー（Tab, Ctrl+I) を連打するだけで順に補完候補を自動で補完
+setopt auto_menu
+# 補完結果をできるだけ詰める
+setopt list_packed
+# カッコの対応などを自動的に補完
+setopt auto_param_keys
+# ディレクトリ名の補完で末尾の / を自動的に付加し、次の補完に備える
+setopt auto_param_slash
+# ファイル名の展開でディレクトリにマッチした場合末尾に / を付加する
+setopt mark_dirs
+# ディレクトリ名だけで､ディレクトリの移動をする
+setopt auto_cd
+# 補完の時に大文字小文字を区別しない
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+# 補完候補表示時にビープ音を鳴らさない
+setopt nolistbeep
+
+#---------------------------------------------------------------------------
+# Alias
+#---------------------------------------------------------------------------
+alias ls="ls -G"
+alias ll='ls -ltr'
+alias la="ls -lhAF --color=auto"
+alias pd="pushd"
+alias po="popd"
+alias gd='dirs -v; echo -n "select number: "; read newdir; cd +"$newdir"'
+# グローバルIPを調べる 要curl
+alias gip='curl ipcheck.ieserver.net'
+
+#---------------------------------------------------------------------------
+# Prompt
+#---------------------------------------------------------------------------
+case ${UID} in
+0)
+    PROMPT="%{${fg[cyan]}%}$(echo ${HOST%%.*} | tr '[a-z]' '[A-Z]') %{${fg[red]}%}%n@%m%#%{${reset_color}%} "
+    PROMPT2="%B%{${fg[red]}%}%_#%{${reset_color}%}%b "
+    SPROMPT="%B%{${fg[red]}%}%r is correct? [n,y,a,e]:%{${reset_color}%}%b "
+    RPROMPT="%{${fg[green]}%}[%~:%T]%{${reset_color}%}"
+    ;;
+*)
+    PROMPT="%{${fg[red]}%}%n@%m%%%{${reset_color}%} "
+    PROMPT2="%{${fg[red]}%}%_%%%{${reset_color}%} "
+    SPROMPT="%{${fg[red]}%}%r is correct? [n,y,a,e]:%{${reset_color}%} "
+    RPROMPT="%{${fg[green]}%}[%~:%T]%{${reset_color}%}"
+    [ -n "${REMOTEHOST}${SSH_CONNECTION}" ] &&
+        PROMPT="%{${fg[cyan]}%}$(echo ${HOST%%.*} | tr '[a-z]' '[A-Z]') ${PROMPT}"
+    ;;
+esac
+
+#---------------------------------------------------------------------------
+# Appearance
+#---------------------------------------------------------------------------
+# プロンプトのカラー表示を有効
+autoload -U colors
+colors
+# Color
+setopt prompt_subst
+# ls時のカラー表記
+export LSCOLORS=gxfxcxdxbxegedabagacad
+# ファイルリスト補完時、ディレクトリをシアン
+zstyle ':completion:*' list-colors 'di=36;49'
+
+#---------------------------------------------------------------------------
+# Function
+#---------------------------------------------------------------------------
+# Mkdir+Cd
+function mkcd() {
+  if [[ -d $1 ]]; then
+    echo "It already exsits! Cd to the directory."
+    cd $1
+  else
+    mkdir -p $1 && cd $1
+  fi
+}
+# Find+Grep
+fg () { find . -type f -print | xargs grep -n --binary-files=without-match $@ }
+# ターミナルで256色表示できているか確認
+function 256colortest() {
+    local code
+    for code in {0..255}; do
+        echo -e "\e[38;05;${code}m $code: Test"
+    done
+}
+# cd後、自動的にls
+function chpwd() { ls }
