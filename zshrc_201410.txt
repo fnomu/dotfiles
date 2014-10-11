@@ -1,3 +1,4 @@
+
 autoload colors
 colors
 PROMPT="%{${fg[yellow]}%}%d%{${reset_color}%} (%D %*)
@@ -20,8 +21,9 @@ alias less='less -N'
 alias vi ='/usr/local/bin/vim'
 alias lo='ls -a -l | less -N'
 alias pd='percol $HOME/dir.info | xargs open'
-alias po='percol $HOME/file.info | xargs open'
-alias pel='percol $HOME/file.info | xargs less'
+alias pco='percol $HOME/file.info | xargs open'
+alias pcl='percol $HOME/file.info | xargs less'
+alias pch='history | percol'
 #alias listpm='find `perl -e 'print "@INC"'` -name "*.pm"' 
 alias listpm='perl -e `print "@INC"`'
 alias rm='rm -r'
@@ -41,13 +43,20 @@ alias lsd="find ./ type -d"
 alias lsa="ls -a"
 alias g="grep"
 source ~/perl5/perlbrew/etc/bashrc
-setopt nolistbeep
-setopt list_packed
+# setopt nolistbeep
+# setopt list_packed
 
 [[ -s `brew --prefix`/etc/autojump.sh ]] && . `brew --prefix`/etc/autojump.sh
 #zsh completion setting
 autoload -Uz compinit
 compinit -u
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}' 
+zstyle ':completion::complete:*' use-cache true
+zstyle ':completion:*' list-colors "${LS_COLORS}"
+#ベルをならさない
+setopt no_beep 
+#補完候補をつめて表示
+setopt LIST_PACKED
 # zstyle ':completion:*' menu select interactive
 # setopt menu_complete
 # bindkey -M menuselect '^a' accept-and-infer-next-history
